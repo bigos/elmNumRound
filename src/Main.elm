@@ -1,8 +1,9 @@
 module Main exposing (Msg(..), main, update, view)
 
 import Browser
-import Html exposing (Html, button, div, hr, text)
+import Html exposing (Html, button, div, hr, li, p, text, ul)
 import Html.Events exposing (onClick)
+import Round
 
 
 main =
@@ -23,6 +24,77 @@ update msg model =
             model - 1
 
 
+sep =
+    "  -   "
+
+
+step =
+    0.1
+
+
+removeZeros lc =
+    if
+        Maybe.withDefault '+'
+            (List.head lc)
+            /= '0'
+    then
+        lc
+
+    else
+        removeZeros
+            (Maybe.withDefault []
+                (List.tail lc)
+            )
+
+
+removeTrailingZeros n =
+    let
+        boo =
+            1
+
+        rev =
+            List.reverse (String.toList n)
+
+        num =
+            String.fromList
+                (List.reverse
+                    (removeZeros
+                        rev
+                    )
+                )
+    in
+    num
+
+
+rounder n =
+    let
+        wholePart =
+            Round.round 0 n
+
+        wholePartLen =
+            String.length wholePart
+
+        fullStr =
+            String.fromFloat n
+
+        fullLen =
+            String.length fullStr
+
+        decLen =
+            -- different numbers will need different integer here
+            fullLen - wholePartLen - 2
+
+        rounded =
+            -- different numbers will need different hard coded number
+            if fullLen > 5 then
+                Round.round decLen n
+
+            else
+                fullStr
+    in
+    removeTrailingZeros rounded
+
+
 view model =
     div []
         [ div []
@@ -30,5 +102,32 @@ view model =
             , div [] [ text (String.fromInt model) ]
             , button [ onClick Increment ] [ text "+" ]
             ]
-        , hr [] []
+        , hr []
+            []
+        , p
+            []
+            [ text (String.fromFloat step) ]
+        , ul []
+            (List.map
+                (\nx ->
+                    let
+                        zz =
+                            nx + step
+                    in
+                    li []
+                        [ text
+                            ("a "
+                                ++ String.fromFloat nx
+                                ++ sep
+                                ++ String.fromFloat zz
+                                ++ " gives "
+                                ++ rounder zz
+                            )
+                        ]
+                )
+                (List.map
+                    (\n -> toFloat n / 5)
+                    (List.range (model + 1) (model + 150))
+                )
+            )
         ]
