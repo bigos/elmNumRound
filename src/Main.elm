@@ -29,7 +29,7 @@ sep =
 
 
 step =
-    0.1
+    0.123456789
 
 
 removeZeros lc =
@@ -82,16 +82,19 @@ rounder n =
 
         decLen =
             -- different numbers will need different integer here
-            fullLen - wholePartLen - 2
+            fullLen - wholePartLen - 1
 
         rounded =
-            -- different numbers will need different hard coded number
-            if fullLen > 5 then
-                Round.round decLen n
+            Debug.log ("vals: " ++ Debug.toString wholePartLen ++ ", " ++ Debug.toString decLen)
+                -- different numbers will need different hard coded number
+                (if decLen > 10 then
+                    Round.round (decLen - 1) n
 
-            else
-                fullStr
+                 else
+                    fullStr
+                )
     in
+    -- rounded
     removeTrailingZeros rounded
 
 
