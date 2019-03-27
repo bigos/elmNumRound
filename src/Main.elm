@@ -88,7 +88,7 @@ rounder n =
             Debug.log ("vals: " ++ Debug.toString wholePartLen ++ ", " ++ Debug.toString decLen)
                 -- different numbers will need different hard coded number
                 (if decLen > 10 then
-                    Round.round (decLen - 1) n
+                    Round.round (decLen - 2) n
 
                  else
                     fullStr
