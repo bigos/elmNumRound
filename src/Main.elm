@@ -32,12 +32,18 @@ step =
     0.123456789
 
 
+removeZeros : List Char -> List Char
 removeZeros lc =
-    if
-        Maybe.withDefault '+'
-            (List.head lc)
-            /= '0'
-    then
+    let
+        doesNotStartWithZero =
+            case List.head lc of
+                Nothing ->
+                    True
+
+                Just val ->
+                    val /= '0'
+    in
+    if doesNotStartWithZero then
         lc
 
     else
@@ -47,32 +53,26 @@ removeZeros lc =
             )
 
 
+removeTrailingZeros : String -> String
 removeTrailingZeros n =
     let
-        boo =
-            1
-
         rev =
             List.reverse (String.toList n)
-
-        num =
-            String.fromList
-                (List.reverse
-                    (removeZeros
-                        rev
-                    )
-                )
     in
-    num
+    String.fromList
+        (List.reverse
+            (removeZeros
+                rev
+            )
+        )
 
 
+rounder : Float -> String
 rounder n =
     let
-        wholePart =
-            Round.round 0 n
-
         wholePartLen =
-            String.length wholePart
+            String.length
+                (Round.round 0 n)
 
         fullStr =
             String.fromFloat n
@@ -81,20 +81,15 @@ rounder n =
             String.length fullStr
 
         decLen =
-            -- different numbers will need different integer here
             fullLen - wholePartLen - 1
 
         rounded =
-            Debug.log ("vals: " ++ Debug.toString wholePartLen ++ ", " ++ Debug.toString decLen)
-                -- different numbers will need different hard coded number
-                (if decLen > 10 then
-                    Round.round (decLen - 2) n
+            if decLen > 10 then
+                Round.round (decLen - 2) n
 
-                 else
-                    fullStr
-                )
+            else
+                fullStr
     in
-    -- rounded
     removeTrailingZeros rounded
 
 
